@@ -3,5 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "AI 生成前端代码的实时质量门禁与局部重生成方法 - 专利原型"
+  "description": "AI 生成前端代码的实时质量门禁与局部重生成方法 - 专利原型",
+  "scripts": {
+    "demo": "node src/demo/run-mp-demo.js"
+  }
 }

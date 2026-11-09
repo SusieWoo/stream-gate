@@ -1,0 +1,424 @@
+{
+  "runId": "mp-gate-run-002",
+  "date": "2026-11-09T13:42:57.444Z",
+  "targetPlatform": "mp-weixin",
+  "summary": {
+    "totalCases": 8,
+    "casesWithInterceptions": 7,
+    "totalInterceptions": 8,
+    "byRule": {
+      "R-TPL-001": 2,
+      "R-API-101": 2,
+      "R-TPL-003": 2,
+      "R-TPL-002": 1,
+      "R-CC-201": 1
+    },
+    "regenLevels": {
+      "L1": 6,
+      "L2": 1,
+      "L未修复": 1
+    },
+    "falsePositives": 1,
+    "falseNegatives": 0,
+    "tokens": {
+      "gateRegen": 1026,
+      "fullRegen": 973,
+      "savedRatio": -0.054470709146968055
+    }
+  },
+  "cases": [
+    {
+      "caseId": "MP-CASE-001",
+      "task": "生成登录表单（u-form + u-form-item + u-input + u-button）",
+      "streamChunks": 8,
+      "expectViolations": [
+        "R-TPL-001"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 5,
+          "ruleId": "R-TPL-001",
+          "nodeExcerpt": "<view class=\"login\">\n    <u-form :model=\"form\">\n      <u--form-item label=\"手机号\" prop=\"phone\">\n        <u-input v-model=\"",
+          "evidence": "标签 u--form-item 不在组件清单内，最相近合法项 u-form-item（编辑距离 1）",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "eventsPreserved": true,
+              "othersKept": true,
+              "detail": "事件集合 [click] → [click]"
+            },
+            "reason": null,
+            "replacementExcerpt": "<view class=\"login\">\n    <u-form :model=\"form\">\n      <u-form-item label=\"手机号\" prop=\"phone\">\n        <u-input v-model=\"f"
+          },
+          "tokens": {
+            "prompt": 97,
+            "response": 69
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "finalCodeViolations": "重判定见 interceptions",
+      "tokens": {
+        "original": 104,
+        "gateRegen": 166,
+        "fullRegen": 104,
+        "savedRatio": -0.5961538461538463
+      }
+    },
+    {
+      "caseId": "MP-CASE-002",
+      "task": "生成跳转首页按钮",
+      "streamChunks": 5,
+      "expectViolations": [
+        "R-API-101"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 4,
+          "ruleId": "R-API-101",
+          "nodeExcerpt": "const goHome = () => { window.location.href = '/pages/home/index'; };",
+          "evidence": "window 在目标平台不可用：小程序无 window 全局对象",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "declsKept": true,
+              "detail": "声明保留 [goHome]"
+            },
+            "reason": null,
+            "replacementExcerpt": "const goHome = () => { uni.navigateTo({ url: '/pages/home/index' }); };"
+          },
+          "tokens": {
+            "prompt": 76,
+            "response": 18
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "finalCodeViolations": "重判定见 interceptions",
+      "tokens": {
+        "original": 49,
+        "gateRegen": 94,
+        "fullRegen": 49,
+        "savedRatio": -0.9183673469387754
+      }
+    },
+    {
+      "caseId": "MP-CASE-003",
+      "task": "生成提交按钮（事件处理函数拼写场景）",
+      "streamChunks": 5,
+      "expectViolations": [
+        "R-TPL-003"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 5,
+          "ruleId": "R-TPL-003",
+          "nodeExcerpt": "<view>\n    <u-button type=\"primary\" text=\"提交\" @click=\"onSubmt\" />\n  </view>",
+          "evidence": "事件处理函数 onSubmt 直至流结束未在脚本中声明，最相近已声明项 onSubmit",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "eventsPreserved": true,
+              "othersKept": true,
+              "detail": "事件集合 [click] → [click]"
+            },
+            "reason": null,
+            "replacementExcerpt": "<view>\n    <u-button type=\"primary\" text=\"提交\" @click=\"onSubmit\" />\n  </view>"
+          },
+          "tokens": {
+            "prompt": 75,
+            "response": 19
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "finalCodeViolations": "重判定见 interceptions",
+      "tokens": {
+        "original": 47,
+        "gateRegen": 94,
+        "fullRegen": 47,
+        "savedRatio": -1
+      }
+    },
+    {
+      "caseId": "MP-CASE-004",
+      "task": "生成保存按钮（属性枚举值场景）",
+      "streamChunks": 5,
+      "expectViolations": [
+        "R-TPL-002"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 2,
+          "ruleId": "R-TPL-002",
+          "nodeExcerpt": "<view>\n    <u-button type=\"primary\" size=\"super-large\" text=\"保存\" @click=\"onSave\" />\n  </view>",
+          "evidence": "属性 size 取值 super-large 不在枚举 [small, medium, large] 内",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "eventsPreserved": true,
+              "othersKept": true,
+              "detail": "事件集合 [click] → [click]"
+            },
+            "reason": null,
+            "replacementExcerpt": "<view>\n    <u-button type=\"primary\" size=\"large\" text=\"保存\" @click=\"onSave\" />\n  </view>"
+          },
+          "tokens": {
+            "prompt": 81,
+            "response": 22
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "finalCodeViolations": "重判定见 interceptions",
+      "tokens": {
+        "original": 52,
+        "gateRegen": 103,
+        "fullRegen": 52,
+        "savedRatio": -0.9807692307692308
+      }
+    },
+    {
+      "caseId": "MP-CASE-005",
+      "task": "生成多端公告页（含平台条件编译）",
+      "streamChunks": 7,
+      "expectViolations": [
+        "R-CC-201"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 5,
+          "ruleId": "R-CC-201",
+          "nodeExcerpt": "// #ifdef MP-WEIXIN\n// TODO: 微信端注册逻辑待补充\n// #endif",
+          "evidence": "条件编译块 #ifdef MP-WEIXIN 在目标平台 mp-weixin 切片后为空（仅注释或无内容）",
+          "regen": {
+            "level": 2,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "platformMarkerPreserved": true,
+              "detail": "平台标记 MP-WEIXIN 保留"
+            },
+            "reason": null,
+            "replacementExcerpt": "// #ifdef MP-WEIXIN\nconst registerWx = () => { uni.showToast({ title: 'wx 注册' }); };\n// #endif"
+          },
+          "tokens": {
+            "prompt": 76,
+            "response": 24
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "finalCodeViolations": "重判定见 interceptions",
+      "tokens": {
+        "original": 53,
+        "gateRegen": 100,
+        "fullRegen": 53,
+        "savedRatio": -0.8867924528301887
+      }
+    },
+    {
+      "caseId": "MP-CASE-006",
+      "task": "生成缓存 token 按钮",
+      "streamChunks": 5,
+      "expectViolations": [
+        "R-API-101"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 4,
+          "ruleId": "R-API-101",
+          "nodeExcerpt": "const saveToken = () => { localStorage.setItem('token', 'abc123'); };",
+          "evidence": "localStorage 在目标平台不可用：须用小程序存储 API，可替换为 uni.setStorageSync / uni.getStorageSync",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "declsKept": true,
+              "detail": "声明保留 [saveToken]"
+            },
+            "reason": null,
+            "replacementExcerpt": "const saveToken = () => { uni.setStorageSync('token', 'abc123'); };"
+          },
+          "tokens": {
+            "prompt": 87,
+            "response": 17
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "finalCodeViolations": "重判定见 interceptions",
+      "tokens": {
+        "original": 50,
+        "gateRegen": 104,
+        "fullRegen": 50,
+        "savedRatio": -1.08
+      }
+    },
+    {
+      "caseId": "MP-CASE-007",
+      "task": "生成昵称表单（合规对照用例）",
+      "streamChunks": 8,
+      "expectViolations": [],
+      "interceptions": [],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "finalCodeViolations": null,
+      "tokens": {
+        "original": 106,
+        "gateRegen": 0,
+        "fullRegen": 0,
+        "savedRatio": null
+      }
+    },
+    {
+      "caseId": "MP-CASE-008",
+      "task": "生成报表查询页（大文件中的单点拼写缺陷，验证子树重生成粒度）",
+      "streamChunks": 19,
+      "expectViolations": [
+        "R-TPL-001"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 11,
+          "ruleId": "R-TPL-001",
+          "nodeExcerpt": "<view class=\"report-page\">\n    <u-form :model=\"query\">\n      <u-form-item label=\"开始日期\" prop=\"startDate\">\n        <u-inpu",
+          "evidence": "标签 u--button 不在组件清单内，最相近合法项 u-button（编辑距离 1）",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "eventsPreserved": true,
+              "othersKept": true,
+              "detail": "事件集合 [click,click] → [click,click]"
+            },
+            "reason": null,
+            "replacementExcerpt": "<view class=\"report-page\">\n    <u-form :model=\"query\">\n      <u-form-item label=\"开始日期\" prop=\"startDate\">\n        <u-inpu"
+          },
+          "tokens": {
+            "prompt": 75,
+            "response": 216
+          }
+        },
+        {
+          "seq": 2,
+          "atChunk": 19,
+          "ruleId": "R-TPL-003",
+          "nodeExcerpt": "<view class=\"report-page\">\n    <u-form :model=\"query\">\n      <u-form-item label=\"开始日期\" prop=\"startDate\">\n        <u-inpu",
+          "evidence": "事件处理函数 onExport 直至流结束未在脚本中声明",
+          "regen": {
+            "level": null,
+            "accepted": false,
+            "contract": null,
+            "reason": "无规则修复策略且未获得模型重生成结果",
+            "replacementExcerpt": null
+          },
+          "tokens": {
+            "prompt": 74,
+            "response": 0
+          }
+        }
+      ],
+      "falsePositives": 1,
+      "falseNegatives": 0,
+      "finalCodeViolations": "重判定见 interceptions",
+      "tokens": {
+        "original": 309,
+        "gateRegen": 365,
+        "fullRegen": 618,
+        "savedRatio": 0.4093851132686084
+      }
+    }
+  ],
+  "trace": [
+    {
+      "caseId": "MP-CASE-001",
+      "type": "pending-resolved",
+      "handler": "onSubmit",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "MP-CASE-001",
+      "type": "pending-resolved",
+      "handler": "onSubmit",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "MP-CASE-002",
+      "type": "pending-resolved",
+      "handler": "goHome",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "MP-CASE-004",
+      "type": "pending-resolved",
+      "handler": "onSave",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "MP-CASE-004",
+      "type": "pending-resolved",
+      "handler": "onSave",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "MP-CASE-005",
+      "type": "cc-sliced",
+      "platform": "h5",
+      "note": "目标平台 mp-weixin 切片后该块不生效，未判定"
+    },
+    {
+      "caseId": "MP-CASE-006",
+      "type": "pending-resolved",
+      "handler": "saveToken",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "MP-CASE-007",
+      "type": "pending-resolved",
+      "handler": "onConfirm",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "MP-CASE-008",
+      "type": "pending-resolved",
+      "handler": "onQuery",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "MP-CASE-008",
+      "type": "pending-resolved",
+      "handler": "onQuery",
+      "note": "声明随后到达，挂起判定解除"
+    }
+  ],
+  "constraintSummary": {
+    "matrixApis": 16,
+    "catalogComponents": 5,
+    "framework": "vue3-script-setup"
+  },
+  "notes": "预标注用例的模拟流式输出原型实验；token 为字符/4 估计值；R-CC-201 的修复片段为预置模型重生成结果。"
+}
