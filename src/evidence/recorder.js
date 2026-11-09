@@ -66,7 +66,19 @@ function renderSummaryMd(record) {
   lines.push(
     '',
     `- 合计拦截 ${summary.totalInterceptions} 次；误报 ${summary.falsePositives}；漏报 ${summary.falseNegatives}`,
-    `- token 估计（字符/4）：门禁重生成 ${summary.tokens.gateRegen}，全文重生成基线 ${summary.tokens.fullRegen}，节省比 ${(summary.tokens.savedRatio * 100).toFixed(1)}%`,
+  );
+  if (summary.bySeverity) {
+    lines.push(`- 按严重级：${Object.entries(summary.bySeverity).map(([k, v]) => `${k} ${v}`).join('；')}`);
+  }
+  lines.push(
+    `- token 估计（本地估算口径）：门禁重生成 ${summary.tokens.gateRegen}，全文重生成基线 ${summary.tokens.fullRegen}，节省比 ${(summary.tokens.savedRatio * 100).toFixed(1)}%`,
+  );
+  if (summary.latency) {
+    lines.push(
+      `- 耗时估算（token×1.8ms）：门禁 ${summary.latency.gateMs}ms，基线 ${summary.latency.baselineMs}ms，节省 ${(summary.latency.savedRatio * 100).toFixed(1)}%`,
+    );
+  }
+  lines.push(
     `- 证据链文件：${record.runId}.json`,
     '',
     '> 说明：本记录来自预标注用例的模拟流式输出原型，token 为估计值，不代表真实模型计量。',

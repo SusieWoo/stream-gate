@@ -1,7 +1,8 @@
 // S3 实时判定器：对 parser 产出的节点按规则集判定
 import { buildConstraintSet } from '../constraints/index.js';
+import { extractSubtree } from '../util/subtree.js';
 
-const KEYWORDS = new Set(['if', 'for', 'while', 'switch', 'return', 'function', 'catch', 'new', 'typeof']);
+const KEYWORDS = new Set(['if', 'for', 'while', 'switch', 'return', 'function', 'catch', 'new', 'typeof', 'async', 'await', 'class']);
 
 export function levenshtein(a, b) {
   const dp = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
@@ -30,7 +31,10 @@ function closest(name, candidates) {
 export function createJudge(constraints = buildConstraintSet()) {
   const ctx = {
     constraints,
-    declared: new Set(['uni', 'console', 'defineProps', 'defineEmits', 'props', 'emit']),
+    declared: new Set([
+      'uni', 'console', 'defineProps', 'defineEmits', 'props', 'emit',
+      ...(constraints.globals ?? []),
+    ]),
     matrix: new Map(constraints.matrix.apis.map((a) => [a.api, a])),
     catalogNames: Object.keys(constraints.catalog),
     pending: [], // 证据不足挂起：模板先于脚本到达时，事件处理函数声明未知
@@ -38,10 +42,16 @@ export function createJudge(constraints = buildConstraintSet()) {
   };
 
   function judge(node) {
-    if (node.kind === 'template-element') return judgeTemplate(node, ctx);
-    if (node.kind === 'script-stmt') return judgeScript(node, ctx);
-    if (node.kind === 'cc-block') return judgeCc(node, ctx);
-    return [];
+    let violations = [];
+    if (node.kind === 'template-element') violations = judgeTemplate(node, ctx);
+    else if (node.kind === 'script-stmt') violations = judgeScript(node, ctx);
+    else if (node.kind === 'cc-block') violations = judgeCc(node, ctx);
+    // 平台专属规则（如 H5 的安全/性能规则）
+    const hooks = node.kind === 'template-element'
+      ? ctx.constraints.extraChecks?.template
+      : node.kind === 'script-stmt' ? ctx.constraints.extraChecks?.script : null;
+    for (const fn of hooks ?? []) violations = violations.concat(fn(node, ctx));
+    return violations;
   }
 
   // 流结束时结算挂起项：声明到达则解除，仍未声明判违规
@@ -65,30 +75,6 @@ export function createJudge(constraints = buildConstraintSet()) {
   }
 
   return { judge, finalize, ctx };
-}
-
-// 提取违规点最小元素子树：重生成粒度按子树计，不按整个模板节点
-function extractSubtree(text, tag) {
-  const start = text.indexOf(`<${tag}`);
-  if (start === -1) return null;
-  const re = /<(\/?)([a-zA-Z][\w-]*)((?:\s[^<>]*?)?)(\/?)>/g;
-  re.lastIndex = start;
-  const stack = [];
-  let m;
-  while ((m = re.exec(text))) {
-    const [, closing, t, , selfClose] = m;
-    if (!closing) {
-      if (selfClose === '/') {
-        if (stack.length === 0) return text.slice(start, m.index + m[0].length);
-      } else stack.push(t);
-    } else {
-      const idx = stack.lastIndexOf(t);
-      if (idx === -1) return null;
-      stack.length = idx;
-      if (stack.length === 0) return text.slice(start, m.index + m[0].length);
-    }
-  }
-  return null;
 }
 
 function parseTags(text) {
@@ -128,7 +114,8 @@ function judgeTemplate(node, ctx) {
     const spec = ctx.constraints.catalog[tag];
     if (!spec) continue; // 原生标签跳过属性/事件校验
     for (const attr of attrs) {
-      const bare = attr.name.replace(/^:/, '');
+      // 属性名统一转驼峰：label-width → labelWidth、model-value → modelValue
+      const bare = attr.name.replace(/^:/, '').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
       if (attr.name.startsWith('v-') || ['class', 'style', 'key'].includes(bare)) continue;
       // R-TPL-003 事件绑定目标：声明证据不足时挂起，流结束统一结算
       if (attr.name.startsWith('@')) {
@@ -139,7 +126,7 @@ function judgeTemplate(node, ctx) {
             subtree: extractSubtree(node.text, tag),
             evidence: `组件 ${tag} 不支持事件 ${event}，合法事件：${spec.events.join(', ') || '（无）'}`,
           });
-        } else if (attr.value && !ctx.declared.has(attr.value)) {
+        } else if (attr.value && /^[a-zA-Z_$][\w$]*$/.test(attr.value) && !ctx.declared.has(attr.value)) {
           ctx.pending.push({ node, tag, handler: attr.value });
         }
         continue;

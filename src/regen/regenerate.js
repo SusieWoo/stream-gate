@@ -1,15 +1,16 @@
 // S4 局部定向重生成（原型）：规则修复策略 + 接口契约校验，失败时回退到父级范围（fixHint 模拟模型重生成）
+// 粒度：优先以违规点的最小子树为单位重生成，而不是整个模板节点
 
-function strategies(node, violation) {
+function strategies(text, violation) {
   switch (violation.ruleId) {
     case 'R-TPL-001':
       if (!violation.suggestion) return null;
-      return node.text
+      return text
         .replaceAll(`<${violation.tag}`, `<${violation.suggestion}`)
         .replaceAll(`</${violation.tag}>`, `</${violation.suggestion}>`);
     case 'R-TPL-002':
       if (violation.value !== undefined && violation.suggestion) {
-        return node.text.replace(
+        return text.replace(
           `${violation.attr}="${violation.value}"`,
           `${violation.attr}="${violation.suggestion}"`,
         );
@@ -17,14 +18,21 @@ function strategies(node, violation) {
       return null;
     case 'R-TPL-003':
       if (!violation.suggestion) return null;
-      return node.text.replaceAll(`="${violation.handler}"`, `="${violation.suggestion}"`);
+      return text.replaceAll(`="${violation.handler}"`, `="${violation.suggestion}"`);
     case 'R-JS-301':
       if (!violation.suggestion) return null;
-      return node.text.replace(new RegExp(`\\b${violation.call}\\s*\\(`), `${violation.suggestion}(`);
+      return text.replace(new RegExp(`\\b${violation.call}\\s*\\(`), `${violation.suggestion}(`);
     case 'R-API-101':
-      return fixPlatformApi(node.text, violation.api);
+      return fixPlatformApi(text, violation.api);
+    case 'R-SEC-402':
+      return text.replace(
+        /(\b(?:apiToken|token|secret|password|apiKey|api_key)\s*=\s*)['"][^'"]{8,}['"]/,
+        '$1import.meta.env.VITE_API_TOKEN',
+      );
+    case 'R-PERF-501':
+      return text.replaceAll(':key="index"', ':key="item.id"');
     default:
-      return null; // R-API-102 / R-CC-201 走模型重生成
+      return null; // R-API-102 / R-CC-201 / R-SEC-401 走模型重生成
   }
 }
 
@@ -39,7 +47,8 @@ function fixPlatformApi(text, api) {
       .replaceAll('localStorage.setItem', 'uni.setStorageSync')
       .replaceAll('localStorage.getItem', 'uni.getStorageSync');
   }
-  if (api === 'alert') return text.replace(/\balert\s*\(/, 'uni.showToast({ title: String(') ;
+  if (api === 'alert') return text.replace(/\balert\s*\(/, 'uni.showToast({ title: String(');
+  if (api === 'wx') return text.replace(/\bwx\.request\s*\(/, 'axios.request(');
   return null;
 }
 
@@ -77,20 +86,25 @@ function checkContract(node, violation, replacement) {
 }
 
 export function regenerate(node, violation, fixHint) {
-  let replacement = strategies(node, violation);
+  // 重生成目标：违规点最小子树优先，取不到时退化为整个节点
+  const targetText = violation.subtree ?? node.text;
+  const isSubtree = targetText !== node.text;
+  const contractNode = isSubtree ? { ...node, text: targetText } : node;
+
+  let replacement = strategies(targetText, violation);
   let level = 1;
   if (replacement == null && fixHint?.replacement != null) {
     replacement = fixHint.replacement;
-    level = 2; // 回退到父级范围：由模型按结构化修复指令重生成
+    level = 2; // 规则策略无法处理，回退到模型按结构化修复指令重生成
   }
   if (replacement == null) {
     return { accepted: false, reason: '无规则修复策略且未获得模型重生成结果' };
   }
-  let contract = checkContract(node, violation, replacement);
+  let contract = checkContract(contractNode, violation, replacement);
   if (!contract.ok && level === 1 && fixHint?.replacement != null) {
     replacement = fixHint.replacement;
     level = 2;
-    contract = checkContract(node, violation, replacement);
+    contract = checkContract(contractNode, violation, replacement);
   }
   if (!contract.ok) {
     return { accepted: false, level, contract, reason: '替换片段与已冻结节点接口契约不一致' };
@@ -99,7 +113,7 @@ export function regenerate(node, violation, fixHint) {
     accepted: true,
     level,
     replacement,
-    newNode: { ...node, text: replacement },
+    newNode: { ...node, text: isSubtree ? node.text.replace(targetText, replacement) : replacement },
     contract,
   };
 }

@@ -13,9 +13,10 @@ const rootDir = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const fixtures = JSON.parse(readFileSync(join(rootDir, 'fixtures', 'mp-cases.json'), 'utf8'));
 
 const constraints = buildConstraintSet();
+const RUN_ID = process.argv[2] ?? 'mp-gate-run-004';
 const recorder = createRecorder({
   rootDir,
-  runId: 'mp-gate-run-004',
+  runId: RUN_ID,
   targetPlatform: constraints.targetPlatform,
 });
 

@@ -1,6 +1,6 @@
 {
   "runId": "mp-gate-run-004",
-  "date": "2026-11-09T13:45:03.527Z",
+  "date": "2026-11-09T14:34:52.913Z",
   "targetPlatform": "mp-weixin",
   "summary": {
     "totalCases": 8,
@@ -20,9 +20,9 @@
     "falsePositives": 0,
     "falseNegatives": 0,
     "tokens": {
-      "gateRegen": 952,
+      "gateRegen": 705,
       "fullRegen": 1678,
-      "savedRatio": 0.432657926102503
+      "savedRatio": 0.5798569725864124
     }
   },
   "cases": [
@@ -47,14 +47,14 @@
               "ok": true,
               "eventsPreserved": true,
               "othersKept": true,
-              "detail": "事件集合 [click] → [click]"
+              "detail": "事件集合 [] → []"
             },
             "reason": null,
-            "replacementExcerpt": "<view class=\"login\">\n    <u-form :model=\"form\">\n      <u-form-item label=\"手机号\" prop=\"phone\">\n        <u-input v-model=\"f"
+            "replacementExcerpt": "<u-form-item label=\"手机号\" prop=\"phone\">\n        <u-input v-model=\"form.phone\" placeholder=\"请输入手机号\" type=\"number\" />\n     "
           },
           "tokens": {
             "prompt": 97,
-            "response": 69
+            "response": 34
           }
         }
       ],
@@ -63,9 +63,9 @@
       "finalCodeViolations": "重判定见 interceptions",
       "tokens": {
         "original": 104,
-        "gateRegen": 166,
+        "gateRegen": 131,
         "fullRegen": 258,
-        "savedRatio": 0.3565891472868217
+        "savedRatio": 0.49224806201550386
       }
     },
     {
@@ -133,11 +133,11 @@
               "detail": "事件集合 [click] → [click]"
             },
             "reason": null,
-            "replacementExcerpt": "<view>\n    <u-button type=\"primary\" text=\"提交\" @click=\"onSubmit\" />\n  </view>"
+            "replacementExcerpt": "<u-button type=\"primary\" text=\"提交\" @click=\"onSubmit\" />"
           },
           "tokens": {
             "prompt": 75,
-            "response": 19
+            "response": 14
           }
         }
       ],
@@ -146,9 +146,9 @@
       "finalCodeViolations": "重判定见 interceptions",
       "tokens": {
         "original": 47,
-        "gateRegen": 94,
+        "gateRegen": 89,
         "fullRegen": 144,
-        "savedRatio": 0.3472222222222222
+        "savedRatio": 0.3819444444444444
       }
     },
     {
@@ -175,11 +175,11 @@
               "detail": "事件集合 [click] → [click]"
             },
             "reason": null,
-            "replacementExcerpt": "<view>\n    <u-button type=\"primary\" size=\"large\" text=\"保存\" @click=\"onSave\" />\n  </view>"
+            "replacementExcerpt": "<u-button type=\"primary\" size=\"large\" text=\"保存\" @click=\"onSave\" />"
           },
           "tokens": {
             "prompt": 81,
-            "response": 22
+            "response": 17
           }
         }
       ],
@@ -188,9 +188,9 @@
       "finalCodeViolations": "重判定见 interceptions",
       "tokens": {
         "original": 52,
-        "gateRegen": 103,
+        "gateRegen": 98,
         "fullRegen": 154,
-        "savedRatio": 0.3311688311688312
+        "savedRatio": 0.36363636363636365
       }
     },
     {
@@ -312,14 +312,14 @@
               "ok": true,
               "eventsPreserved": true,
               "othersKept": true,
-              "detail": "事件集合 [click,click] → [click,click]"
+              "detail": "事件集合 [click] → [click]"
             },
             "reason": null,
-            "replacementExcerpt": "<view class=\"report-page\">\n    <u-form :model=\"query\">\n      <u-form-item label=\"开始日期\" prop=\"startDate\">\n        <u-inpu"
+            "replacementExcerpt": "<u-button type=\"primary\" text=\"导出\" @click=\"onExport\" />"
           },
           "tokens": {
             "prompt": 75,
-            "response": 216
+            "response": 14
           }
         }
       ],
@@ -328,9 +328,9 @@
       "finalCodeViolations": "重判定见 interceptions",
       "tokens": {
         "original": 309,
-        "gateRegen": 291,
+        "gateRegen": 89,
         "fullRegen": 668,
-        "savedRatio": 0.5643712574850299
+        "savedRatio": 0.8667664670658682
       }
     }
   ],
