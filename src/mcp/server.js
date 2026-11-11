@@ -55,7 +55,7 @@ function asText(payload) {
 }
 
 const server = new Server(
-  { name: 'ai-code-gate', version: '0.1.0' },
+  { name: 'stream-gate', version: '0.1.0' },
   { capabilities: { tools: {} } },
 );
 
@@ -95,4 +95,4 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 });
 
 await server.connect(new StdioServerTransport());
-console.error('[ai-code-gate] MCP server ready on stdio');
+console.error('[stream-gate] MCP server ready on stdio');
