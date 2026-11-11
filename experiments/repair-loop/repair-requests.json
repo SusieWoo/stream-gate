@@ -1,0 +1,38 @@
+[
+  {
+    "caseId": "WEB-CASE-002",
+    "platform": "h5",
+    "ruleId": "R-SEC-401",
+    "nodeKind": "template-element",
+    "evidence": "v-html 直接渲染 detail.content，来源未经净化，存在 DOM XSS 风险；须经 sanitize 或改用文本插值",
+    "contractRequirement": "保留节点上全部事件绑定与除违规处理函数外的其余处理函数",
+    "targetText": "<div class=\"notice-detail\">\n    <h1 class=\"title\">{{ detail.title }}</h1>\n    <div class=\"content\" v-html=\"detail.content\"></div>"
+  },
+  {
+    "caseId": "WEB-CASE-010",
+    "platform": "h5",
+    "ruleId": "R-TPL-002",
+    "nodeKind": "template-element",
+    "evidence": "组件 el-table 不支持事件 selection-chang，合法事件：row-click, selection-change, sort-change, row-dblclick",
+    "contractRequirement": "保留节点上全部事件绑定与除违规处理函数外的其余处理函数",
+    "targetText": "<el-table :data=\"rows\" border @row-click=\"onRowClick\" @selection-chang=\"onSelectChange\">\n      <el-table-column prop=\"id\" label=\"ID\" />\n      <el-table-column prop=\"name\" label=\"名称\" />\n    </el-table>"
+  },
+  {
+    "caseId": "WEB-CASE-011",
+    "platform": "h5",
+    "ruleId": "R-TPL-002",
+    "nodeKind": "template-element",
+    "evidence": "组件 el-input 不支持属性 maxlen，合法属性：modelValue, placeholder, disabled, clearable, maxlength, rows, readonly, type",
+    "contractRequirement": "保留节点上全部事件绑定与除违规处理函数外的其余处理函数",
+    "targetText": "<el-input v-model=\"form.name\" maxlen=\"20\" placeholder=\"姓名\" />"
+  },
+  {
+    "caseId": "MP-CASE-005",
+    "platform": "mp-weixin",
+    "ruleId": "R-CC-201",
+    "nodeKind": "cc-block",
+    "evidence": "条件编译块 #ifdef MP-WEIXIN 在目标平台 mp-weixin 切片后为空（仅注释或无内容）",
+    "contractRequirement": "保留原条件编译平台标记与 #endif 结束标记",
+    "targetText": "// #ifdef MP-WEIXIN\n// TODO: 微信端注册逻辑待补充\n// #endif\n"
+  }
+]

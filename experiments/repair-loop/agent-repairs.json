@@ -1,0 +1,19 @@
+{
+  "说明": "模型应答：由本会话中的 LLM（Trae 内置模型驱动的编码代理）仅依据 repair-requests.json 的结构化修复指令生成，未参考 fixtures 中的预置 fixHint。键为 caseId。",
+  "WEB-CASE-002": {
+    "replacement": "<div class=\"notice-detail\">\n    <h1 class=\"title\">{{ detail.title }}</h1>\n    <div class=\"content\" v-html=\"sanitize(detail.content)\"></div>",
+    "note": "v-html 来源须经净化函数包裹；外层结构与标题插值保持不变"
+  },
+  "WEB-CASE-010": {
+    "replacement": "<el-table :data=\"rows\" border @row-click=\"onRowClick\" @selection-change=\"onSelectChange\">\n      <el-table-column prop=\"id\" label=\"ID\" />\n      <el-table-column prop=\"name\" label=\"名称\" />\n    </el-table>",
+    "note": "selection-chang 非合法事件，按合法事件清单改为 selection-change；row-click 绑定保留"
+  },
+  "WEB-CASE-011": {
+    "replacement": "<el-input v-model=\"form.name\" maxlength=\"20\" placeholder=\"姓名\" />",
+    "note": "maxlen 非合法属性，按合法属性清单改为 maxlength；v-model 与 placeholder 保留"
+  },
+  "MP-CASE-005": {
+    "replacement": "// #ifdef MP-WEIXIN\nconst registerForWeixin = () => { uni.showToast({ title: '微信端注册' }); };\n// #endif\n",
+    "note": "空切片块须给出真实语句，保留平台标记与结束标记"
+  }
+}

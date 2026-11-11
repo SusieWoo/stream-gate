@@ -1,0 +1,447 @@
+{
+  "runId": "agent-repair-run-001",
+  "date": "2026-11-11",
+  "model": "trae-agent-llm",
+  "cases": [
+    {
+      "caseId": "WEB-CASE-001",
+      "changed": true,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-TPL-001"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 19
+      },
+      "detail": [
+        {
+          "ruleId": "R-TPL-001",
+          "level": 1,
+          "accepted": true,
+          "contract": "事件集合 [] → []",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "WEB-CASE-002",
+      "changed": true,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-SEC-401"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 7
+      },
+      "detail": [
+        {
+          "ruleId": "R-SEC-401",
+          "level": 2,
+          "accepted": true,
+          "contract": "事件集合 [] → []",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "WEB-CASE-003",
+      "changed": true,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-SEC-402"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 6
+      },
+      "detail": [
+        {
+          "ruleId": "R-SEC-402",
+          "level": 1,
+          "accepted": true,
+          "contract": "声明保留 [token]",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "WEB-CASE-004",
+      "changed": true,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-API-101"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 7
+      },
+      "detail": [
+        {
+          "ruleId": "R-API-101",
+          "level": 1,
+          "accepted": true,
+          "contract": "声明保留 [submit]",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "WEB-CASE-005",
+      "changed": true,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-PERF-501"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 6
+      },
+      "detail": [
+        {
+          "ruleId": "R-PERF-501",
+          "level": 1,
+          "accepted": true,
+          "contract": "事件集合 [] → []",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "WEB-CASE-006",
+      "changed": true,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-TPL-003"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 5
+      },
+      "detail": [
+        {
+          "ruleId": "R-TPL-003",
+          "level": 1,
+          "accepted": true,
+          "contract": "事件集合 [click] → [click]",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "WEB-CASE-007",
+      "changed": true,
+      "stats": {
+        "interceptions": 2,
+        "rules": [
+          "R-TPL-002"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 5
+      },
+      "detail": [
+        {
+          "ruleId": "R-TPL-002",
+          "level": 1,
+          "accepted": true,
+          "contract": "事件集合 [click] → [click]",
+          "reason": null
+        },
+        {
+          "ruleId": "R-TPL-002",
+          "level": 1,
+          "accepted": true,
+          "contract": "事件集合 [click] → [click]",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "WEB-CASE-008",
+      "changed": false,
+      "stats": {
+        "interceptions": 0,
+        "rules": [],
+        "rulesHit": 0,
+        "mode": "check",
+        "chunks": 9
+      },
+      "detail": []
+    },
+    {
+      "caseId": "WEB-CASE-009",
+      "changed": true,
+      "stats": {
+        "interceptions": 2,
+        "rules": [
+          "R-PERF-501",
+          "R-SEC-402"
+        ],
+        "rulesHit": 2,
+        "mode": "check",
+        "chunks": 24
+      },
+      "detail": [
+        {
+          "ruleId": "R-PERF-501",
+          "level": 1,
+          "accepted": true,
+          "contract": "事件集合 [] → []",
+          "reason": null
+        },
+        {
+          "ruleId": "R-SEC-402",
+          "level": 1,
+          "accepted": true,
+          "contract": "声明保留 [apiToken]",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "WEB-CASE-010",
+      "changed": false,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-TPL-002"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 7
+      },
+      "detail": [
+        {
+          "ruleId": "R-TPL-002",
+          "level": 2,
+          "accepted": false,
+          "contract": "事件集合 [row-click,selection-chang] → [row-click,selection-change]",
+          "reason": "替换片段与已冻结节点接口契约不一致"
+        }
+      ]
+    },
+    {
+      "caseId": "WEB-CASE-011",
+      "changed": true,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-TPL-002"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 6
+      },
+      "detail": [
+        {
+          "ruleId": "R-TPL-002",
+          "level": 2,
+          "accepted": true,
+          "contract": "事件集合 [] → []",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "WEB-CASE-012",
+      "changed": false,
+      "stats": {
+        "interceptions": 0,
+        "rules": [],
+        "rulesHit": 0,
+        "mode": "check",
+        "chunks": 10
+      },
+      "detail": []
+    },
+    {
+      "caseId": "MP-CASE-001",
+      "changed": true,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-TPL-001"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 8
+      },
+      "detail": [
+        {
+          "ruleId": "R-TPL-001",
+          "level": 1,
+          "accepted": true,
+          "contract": "事件集合 [] → []",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "MP-CASE-002",
+      "changed": true,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-API-101"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 5
+      },
+      "detail": [
+        {
+          "ruleId": "R-API-101",
+          "level": 1,
+          "accepted": true,
+          "contract": "声明保留 [goHome]",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "MP-CASE-003",
+      "changed": true,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-TPL-003"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 5
+      },
+      "detail": [
+        {
+          "ruleId": "R-TPL-003",
+          "level": 1,
+          "accepted": true,
+          "contract": "事件集合 [click] → [click]",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "MP-CASE-004",
+      "changed": true,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-TPL-002"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 5
+      },
+      "detail": [
+        {
+          "ruleId": "R-TPL-002",
+          "level": 1,
+          "accepted": true,
+          "contract": "事件集合 [click] → [click]",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "MP-CASE-005",
+      "changed": true,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-CC-201"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 7
+      },
+      "detail": [
+        {
+          "ruleId": "R-CC-201",
+          "level": 2,
+          "accepted": true,
+          "contract": "平台标记 MP-WEIXIN 保留",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "MP-CASE-006",
+      "changed": true,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-API-101"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 5
+      },
+      "detail": [
+        {
+          "ruleId": "R-API-101",
+          "level": 1,
+          "accepted": true,
+          "contract": "声明保留 [saveToken]",
+          "reason": null
+        }
+      ]
+    },
+    {
+      "caseId": "MP-CASE-007",
+      "changed": false,
+      "stats": {
+        "interceptions": 0,
+        "rules": [],
+        "rulesHit": 0,
+        "mode": "check",
+        "chunks": 8
+      },
+      "detail": []
+    },
+    {
+      "caseId": "MP-CASE-008",
+      "changed": true,
+      "stats": {
+        "interceptions": 1,
+        "rules": [
+          "R-TPL-001"
+        ],
+        "rulesHit": 1,
+        "mode": "check",
+        "chunks": 19
+      },
+      "detail": [
+        {
+          "ruleId": "R-TPL-001",
+          "level": 1,
+          "accepted": true,
+          "contract": "事件集合 [click] → [click]",
+          "reason": null
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalCases": 20,
+    "interceptions": 19,
+    "l1RuleRepair": 15,
+    "l2ModelRepairAccepted": 3,
+    "contractOrNoFixRejected": 1,
+    "modelRequestsSource": "experiments/repair-loop/repair-requests.json",
+    "agentAnswersSource": "experiments/repair-loop/agent-repairs.json",
+    "caveats": [
+      "修复模型为本会话中的 LLM（Trae 内置模型驱动），非独立模型 API；token 与耗时仍为估算口径，未计量",
+      "修复请求与 fixtures 同源生成，且应答者参与过用例构造，存在同源偏差，结论仅用于说明链路可行",
+      "未命中 L2 的规则修复与既有 run-002/run-004 一致，此处仅新增 L2 环节的真实模型应答数据",
+      "WEB-CASE-010 被契约拒绝属设计内保守行为：事件改名不在契约豁免范围（仅豁免处理函数改名），语义正确的替换同样转人工，与 run-002 口径一致"
+    ]
+  }
+}
