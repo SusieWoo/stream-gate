@@ -6,6 +6,11 @@
   "description": "AI 生成前端代码的实时质量门禁与局部重生成方法 - 专利原型",
   "scripts": {
     "demo": "node src/demo/run-mp-demo.js",
-    "demo:web": "node src/demo/run-web-demo.js"
+    "demo:web": "node src/demo/run-web-demo.js",
+    "mcp": "node src/mcp/server.js",
+    "mcp:smoke": "node src/mcp/smoke-test.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2"
   }
 }
