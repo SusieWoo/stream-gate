@@ -65,6 +65,7 @@ export function createJudge(constraints = buildConstraintSet()) {
       const near = closest(p.handler, [...ctx.declared]);
       violations.push({
         ruleId: 'R-TPL-003', node: p.node, tag: p.tag, handler: p.handler,
+        innerOffset: p.innerOffset,
         suggestion: near?.name,
         subtree: extractSubtree(p.node.text, p.tag),
         evidence: `事件处理函数 ${p.handler} 直至流结束未在脚本中声明` + (near ? `，最相近已声明项 ${near.name}` : ''),
@@ -82,7 +83,12 @@ function parseTags(text) {
   const tags = [];
   let m;
   while ((m = re.exec(text))) {
-    tags.push({ tag: m[1], attrs: parseAttrs(m[2] || '') });
+    tags.push({
+      tag: m[1],
+      attrs: parseAttrs(m[2] || ''),
+      index: m.index,
+      attrsBase: m.index + 1 + m[1].length,
+    });
   }
   return tags;
 }
@@ -91,20 +97,21 @@ function parseAttrs(attrText) {
   const re = /([:@a-zA-Z_][\w:.-]*)(?:\s*=\s*"([^"]*)")?/g;
   const attrs = [];
   let m;
-  while ((m = re.exec(attrText))) attrs.push({ name: m[1], value: m[2] });
+  while ((m = re.exec(attrText))) attrs.push({ name: m[1], value: m[2], index: m.index });
   return attrs;
 }
 
 function judgeTemplate(node, ctx) {
   const violations = [];
   const tags = parseTags(node.text);
-  for (const { tag, attrs } of tags) {
+  for (const { tag, attrs, index, attrsBase } of tags) {
     // R-TPL-001 标签存在性
     if (!ctx.constraints.nativeTags.includes(tag) && !ctx.catalogNames.includes(tag)) {
       const near = closest(tag, ctx.catalogNames);
       violations.push({
         ruleId: 'R-TPL-001',
         tag,
+        innerOffset: index,
         suggestion: near?.name,
         subtree: extractSubtree(node.text, tag),
         evidence: `标签 ${tag} 不在组件清单内` + (near ? `，最相近合法项 ${near.name}（编辑距离 ${near.distance}）` : ''),
@@ -123,11 +130,12 @@ function judgeTemplate(node, ctx) {
         if (!spec.events.includes(event)) {
           violations.push({
             ruleId: 'R-TPL-002', tag, attr: `@${event}`,
+            innerOffset: attrsBase + attr.index,
             subtree: extractSubtree(node.text, tag),
             evidence: `组件 ${tag} 不支持事件 ${event}，合法事件：${spec.events.join(', ') || '（无）'}`,
           });
         } else if (attr.value && /^[a-zA-Z_$][\w$]*$/.test(attr.value) && !ctx.declared.has(attr.value)) {
-          ctx.pending.push({ node, tag, handler: attr.value });
+          ctx.pending.push({ node, tag, handler: attr.value, innerOffset: attrsBase + attr.index });
         }
         continue;
       }
@@ -136,12 +144,14 @@ function judgeTemplate(node, ctx) {
       if (!prop) {
         violations.push({
           ruleId: 'R-TPL-002', tag, attr: bare,
+          innerOffset: attrsBase + attr.index,
           subtree: extractSubtree(node.text, tag),
           evidence: `组件 ${tag} 不支持属性 ${bare}，合法属性：${Object.keys(spec.props).join(', ')}`,
         });
       } else if (prop.enum && attr.value && !attr.name.startsWith(':') && !prop.enum.includes(attr.value)) {
         violations.push({
           ruleId: 'R-TPL-002', tag, attr: bare, value: attr.value, suggestion: prop.enum[prop.enum.length - 1],
+          innerOffset: attrsBase + attr.index,
           subtree: extractSubtree(node.text, tag),
           evidence: `属性 ${bare} 取值 ${attr.value} 不在枚举 [${prop.enum.join(', ')}] 内`,
         });
@@ -164,9 +174,11 @@ function judgeScript(node, ctx) {
     if (info.supported) continue;
     if (api.startsWith('uni.')) continue;
     const re = new RegExp(`\\b${api}\\b`);
-    if (re.test(text)) {
+    const apiHit = re.exec(text);
+    if (apiHit) {
       violations.push({
         ruleId: 'R-API-101', api,
+        innerOffset: apiHit.index,
         evidence: `${api} 在目标平台不可用：${info.reason}` + (info.alternative ? `，可替换为 ${info.alternative}` : ''),
       });
     }
@@ -177,7 +189,7 @@ function judgeScript(node, ctx) {
     const full = `uni.${m[1]}`;
     const info = ctx.matrix.get(full);
     if (!info || !info.supported) {
-      violations.push({ ruleId: 'R-API-102', api: full, evidence: `${full} 不在目标平台 API 白名单内` });
+      violations.push({ ruleId: 'R-API-102', api: full, innerOffset: m.index, evidence: `${full} 不在目标平台 API 白名单内` });
     }
   }
   // R-JS-301 调用目标必须已声明
@@ -190,6 +202,7 @@ function judgeScript(node, ctx) {
     const near = closest(name, [...ctx.declared]);
     violations.push({
       ruleId: 'R-JS-301', call: name,
+      innerOffset: m.index,
       suggestion: near?.name,
       evidence: `调用的函数 ${name} 未声明` + (near ? `，最相近已声明项 ${near.name}` : ''),
     });

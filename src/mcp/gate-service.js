@@ -25,11 +25,12 @@ function createSession({ platform, fixHints }) {
   const trace = [];
   let seq = 0;
 
-  function record(violation, regen, round) {
+  function record(violation, regen, round, offset = null) {
     seq += 1;
     trace.push({
       seq,
       round,
+      offset,
       ruleId: violation.ruleId,
       severity: severityOf(violation.ruleId),
       evidence: violation.evidence,
@@ -44,17 +45,24 @@ function createSession({ platform, fixHints }) {
   }
 
   // 对单个已闭合节点做判定与多轮修复。返回 replacement 表示该节点整体应被替换的文本。
-  function processNode(node) {
+  // reportAll: 契约拒绝后继续展开该节点剩余违规（供 lint 使用），不改变流式门禁语义
+  function processNode(node, reportAll = false) {
     let current = node;
-    for (let round = 0; round < MAX_ROUNDS; round++) {
-      const violations = judge.judge(current);
+    const skipped = new Set();
+    const maxRounds = reportAll ? 50 : MAX_ROUNDS;
+    for (let round = 0; round < maxRounds; round++) {
+      const violations = judge.judge(current).filter((v) => !skipped.has(`${v.ruleId}|${v.evidence}`));
       if (violations.length === 0) {
         return { replacement: round === 0 ? null : current.text };
       }
       const violation = violations[0];
       const regen = regenerate(current, violation, fixHints[violation.ruleId]);
-      record(violation, regen, round + 1);
+      record(violation, regen, round + 1, (current.offset ?? 0) + (violation.innerOffset ?? 0));
       if (!regen.accepted) {
+        if (reportAll) {
+          skipped.add(`${violation.ruleId}|${violation.evidence}`);
+          continue;
+        }
         return {
           needsHuman: true,
           replacement: round === 0 ? null : current.text,
@@ -94,7 +102,7 @@ function summarize(session, extra) {
 }
 
 // 一次性门禁：不驱动模型，按行切分后逐节点判定与修复
-export function check({ code, platform = 'h5', fixHints = {}, linesPerChunk = 2 }) {
+export function check({ code, platform = 'h5', fixHints = {}, linesPerChunk = 2, reportAll = false }) {
   if (typeof code !== 'string' || code.trim() === '') {
     throw new Error('code 不能为空');
   }
@@ -104,7 +112,7 @@ export function check({ code, platform = 'h5', fixHints = {}, linesPerChunk = 2 
   for (const chunk of splitChunks(code, linesPerChunk)) {
     finalCode += chunk;
     for (const node of session.parser.push(chunk)) {
-      const result = session.processNode(node);
+      const result = session.processNode(node, reportAll);
       if (result.replacement !== null) {
         finalCode = finalCode.replace(node.text, result.replacement);
       }
@@ -114,17 +122,27 @@ export function check({ code, platform = 'h5', fixHints = {}, linesPerChunk = 2 
   // 流结束结算挂起项（模板先于脚本到达的事件处理函数）
   for (const violation of session.judge.finalize()) {
     const regen = regenerate(violation.node, violation, fixHints[violation.ruleId]);
-    session.record(violation, regen, 1);
+    session.record(violation, regen, 1, (violation.node?.offset ?? 0) + (violation.innerOffset ?? 0));
     if (regen.accepted) {
       finalCode = finalCode.replace(violation.node.text, regen.newNode.text);
     }
   }
 
+  const summary = summarize(session, { mode: 'check', chunks: splitChunks(code, linesPerChunk).length });
+  summary.violations = summary.violations.map((v) => ({ ...v, loc: locate(code, v.offset) }));
   return {
     code: finalCode,
     changed: finalCode !== code,
-    ...summarize(session, { mode: 'check', chunks: splitChunks(code, linesPerChunk).length }),
+    ...summary,
   };
+}
+
+// 字符偏移 → 1 基行列，供 ESLint/CLI 定位
+function locate(code, offset) {
+  if (typeof offset !== 'number' || offset < 0) return null;
+  const before = code.slice(0, offset);
+  const lastBreak = before.lastIndexOf('\n');
+  return { line: before.split('\n').length, column: offset - lastBreak };
 }
 
 // 流式门禁：驱动提供者产出，命中即中断，从违规节点末尾续写

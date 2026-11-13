@@ -8,7 +8,11 @@
     "demo": "node src/demo/run-mp-demo.js",
     "demo:web": "node src/demo/run-web-demo.js",
     "mcp": "node src/mcp/server.js",
-    "mcp:smoke": "node src/mcp/smoke-test.js"
+    "mcp:smoke": "node src/mcp/smoke-test.js",
+    "gate": "node bin/stream-gate.js"
+  },
+  "bin": {
+    "stream-gate": "bin/stream-gate.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2"
