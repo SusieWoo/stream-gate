@@ -1,0 +1,784 @@
+{
+  "runId": "web-gate-run-001",
+  "date": "2026-11-13T07:17:44.867Z",
+  "targetPlatform": "h5",
+  "summary": {
+    "totalCases": 12,
+    "totalLines": 205,
+    "casesWithInterceptions": 10,
+    "totalInterceptions": 12,
+    "byRule": {
+      "R-TPL-001": 1,
+      "R-SEC-401": 1,
+      "R-SEC-402": 2,
+      "R-API-101": 1,
+      "R-PERF-501": 2,
+      "R-TPL-003": 1,
+      "R-TPL-002": 4
+    },
+    "bySeverity": {
+      "中": 2,
+      "高": 4,
+      "低": 6
+    },
+    "regenLevels": {
+      "L1": 9,
+      "L2": 2,
+      "L0-未修复": 1
+    },
+    "contractRejections": 1,
+    "falsePositives": 0,
+    "falseNegatives": 0,
+    "tokens": {
+      "gateRegen": 292,
+      "fullRegen": 3034,
+      "savedRatio": 0.9037574159525379
+    },
+    "latency": {
+      "gateMs": 1966,
+      "baselineMs": 6901,
+      "savedRatio": 0.7151137516301985
+    }
+  },
+  "cases": [
+    {
+      "caseId": "WEB-CASE-001",
+      "task": "生成用户管理列表页（表单 + 表格 + 分页，含组件标签拼写缺陷）",
+      "codeLines": 36,
+      "streamChunks": 19,
+      "expectViolations": [
+        "R-TPL-001"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 13,
+          "ruleId": "R-TPL-001",
+          "severity": "中",
+          "evidence": "标签 el--table-column 不在组件清单内，最相近合法项 el-table-column（编辑距离 1）",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "eventsPreserved": true,
+              "othersKept": true,
+              "detail": "事件集合 [] → []"
+            },
+            "reason": null,
+            "replacementExcerpt": "<el-table-column prop=\"createdAt\" label=\"创建时间\" />"
+          },
+          "tokens": {
+            "prompt": 1,
+            "response": 16
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "tokens": {
+        "original": 382,
+        "gateRegen": 17,
+        "fullRegen": 771,
+        "savedRatio": 0.9779507133592736
+      },
+      "latency": {
+        "gateMs": 151,
+        "baselineMs": 1508
+      }
+    },
+    {
+      "caseId": "WEB-CASE-002",
+      "task": "生成公告详情页（富文本 v-html 渲染）",
+      "codeLines": 13,
+      "streamChunks": 7,
+      "expectViolations": [
+        "R-SEC-401"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 4,
+          "ruleId": "R-SEC-401",
+          "severity": "高",
+          "evidence": "v-html 直接渲染 detail.content，来源未经净化，存在 DOM XSS 风险；须经 sanitize 或改用文本插值",
+          "regen": {
+            "level": 2,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "eventsPreserved": true,
+              "othersKept": true,
+              "detail": "事件集合 [] → []"
+            },
+            "reason": null,
+            "replacementExcerpt": "<div class=\"content\" v-html=\"sanitize(detail.content)\"></div>"
+          },
+          "tokens": {
+            "prompt": 1,
+            "response": 16
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "tokens": {
+        "original": 93,
+        "gateRegen": 17,
+        "fullRegen": 193,
+        "savedRatio": 0.9119170984455959
+      },
+      "latency": {
+        "gateMs": 151,
+        "baselineMs": 467
+      }
+    },
+    {
+      "caseId": "WEB-CASE-003",
+      "task": "生成用户信息请求封装（硬编码 token）",
+      "codeLines": 10,
+      "streamChunks": 6,
+      "expectViolations": [
+        "R-SEC-402"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 2,
+          "ruleId": "R-SEC-402",
+          "severity": "高",
+          "evidence": "变量 token 硬编码密钥（sk-l****91），须改为环境变量注入",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "declsKept": true,
+              "detail": "声明保留 [token]"
+            },
+            "reason": null,
+            "replacementExcerpt": "const token = import.meta.env.VITE_API_TOKEN;"
+          },
+          "tokens": {
+            "prompt": 1,
+            "response": 12
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "tokens": {
+        "original": 72,
+        "gateRegen": 13,
+        "fullRegen": 151,
+        "savedRatio": 0.9139072847682119
+      },
+      "latency": {
+        "gateMs": 143,
+        "baselineMs": 392
+      }
+    },
+    {
+      "caseId": "WEB-CASE-004",
+      "task": "生成登录提交逻辑（误用小程序专用 API）",
+      "codeLines": 13,
+      "streamChunks": 7,
+      "expectViolations": [
+        "R-API-101"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 6,
+          "ruleId": "R-API-101",
+          "severity": "高",
+          "evidence": "wx 在目标平台不可用：浏览器环境无 wx 全局对象，小程序专用 API 不可用，可替换为 axios / fetch",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "declsKept": true,
+              "detail": "声明保留 [submit]"
+            },
+            "reason": null,
+            "replacementExcerpt": "const submit = () => {\n  axios.request({\n    url: '/api/login',\n    method: 'POST',\n    data: { user: form.user, pwd: fo"
+          },
+          "tokens": {
+            "prompt": 1,
+            "response": 52
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "tokens": {
+        "original": 66,
+        "gateRegen": 53,
+        "fullRegen": 139,
+        "savedRatio": 0.618705035971223
+      },
+      "latency": {
+        "gateMs": 215,
+        "baselineMs": 370
+      }
+    },
+    {
+      "caseId": "WEB-CASE-005",
+      "task": "生成消息列表（列表 key 使用数组下标）",
+      "codeLines": 11,
+      "streamChunks": 6,
+      "expectViolations": [
+        "R-PERF-501"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 4,
+          "ruleId": "R-PERF-501",
+          "severity": "低",
+          "evidence": ":key=\"index\" 以数组下标作列表 key，增删排序时节点复用错乱，应使用业务唯一标识",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "eventsPreserved": true,
+              "othersKept": true,
+              "detail": "事件集合 [] → []"
+            },
+            "reason": null,
+            "replacementExcerpt": "<div class=\"list\">\n    <div v-for=\"(item, index) in list\" :key=\"item.id\" class=\"item\">\n      <span>{{ item.name }}</span"
+          },
+          "tokens": {
+            "prompt": 1,
+            "response": 51
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "tokens": {
+        "original": 69,
+        "gateRegen": 52,
+        "fullRegen": 145,
+        "savedRatio": 0.6413793103448275
+      },
+      "latency": {
+        "gateMs": 214,
+        "baselineMs": 381
+      }
+    },
+    {
+      "caseId": "WEB-CASE-006",
+      "task": "生成提交按钮（事件处理函数拼写不一致）",
+      "codeLines": 8,
+      "streamChunks": 5,
+      "expectViolations": [
+        "R-TPL-003"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 5,
+          "ruleId": "R-TPL-003",
+          "severity": "中",
+          "evidence": "事件处理函数 onSbumit 直至流结束未在脚本中声明，最相近已声明项 onSubmit",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "eventsPreserved": true,
+              "othersKept": true,
+              "detail": "事件集合 [click] → [click]"
+            },
+            "reason": null,
+            "replacementExcerpt": "<el-button type=\"primary\" @click=\"onSubmit\">提交</el-button>"
+          },
+          "tokens": {
+            "prompt": 1,
+            "response": 16
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "tokens": {
+        "original": 47,
+        "gateRegen": 17,
+        "fullRegen": 101,
+        "savedRatio": 0.8316831683168316
+      },
+      "latency": {
+        "gateMs": 151,
+        "baselineMs": 302
+      }
+    },
+    {
+      "caseId": "WEB-CASE-007",
+      "task": "生成确认按钮（属性枚举取值非法）",
+      "codeLines": 8,
+      "streamChunks": 5,
+      "expectViolations": [
+        "R-TPL-002"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 2,
+          "ruleId": "R-TPL-002",
+          "severity": "低",
+          "evidence": "属性 type 取值 main 不在枚举 [primary, success, warning, danger, info, default] 内",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "eventsPreserved": true,
+              "othersKept": true,
+              "detail": "事件集合 [click] → [click]"
+            },
+            "reason": null,
+            "replacementExcerpt": "<el-button type=\"default\" size=\"big\" @click=\"onOk\">确定</el-button>"
+          },
+          "tokens": {
+            "prompt": 1,
+            "response": 18
+          }
+        },
+        {
+          "seq": 2,
+          "atChunk": 2,
+          "ruleId": "R-TPL-002",
+          "severity": "低",
+          "evidence": "属性 size 取值 big 不在枚举 [large, default, small] 内",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "eventsPreserved": true,
+              "othersKept": true,
+              "detail": "事件集合 [click] → [click]"
+            },
+            "reason": null,
+            "replacementExcerpt": "<el-button type=\"default\" size=\"small\" @click=\"onOk\">确定</el-button>"
+          },
+          "tokens": {
+            "prompt": 1,
+            "response": 19
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "tokens": {
+        "original": 46,
+        "gateRegen": 39,
+        "fullRegen": 99,
+        "savedRatio": 0.6060606060606061
+      },
+      "latency": {
+        "gateMs": 310,
+        "baselineMs": 418
+      }
+    },
+    {
+      "caseId": "WEB-CASE-008",
+      "task": "生成个人资料表单（合规对照）",
+      "codeLines": 17,
+      "streamChunks": 9,
+      "expectViolations": [],
+      "interceptions": [],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "tokens": {
+        "original": 154,
+        "gateRegen": 0,
+        "fullRegen": 0,
+        "savedRatio": null
+      },
+      "latency": {
+        "gateMs": 0,
+        "baselineMs": 0
+      }
+    },
+    {
+      "caseId": "WEB-CASE-009",
+      "task": "生成订单管理页（大文件，含列表 key 与硬编码密钥两处缺陷）",
+      "codeLines": 47,
+      "streamChunks": 24,
+      "expectViolations": [
+        "R-PERF-501",
+        "R-SEC-402"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 15,
+          "ruleId": "R-PERF-501",
+          "severity": "低",
+          "evidence": ":key=\"index\" 以数组下标作列表 key，增删排序时节点复用错乱，应使用业务唯一标识",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "eventsPreserved": true,
+              "othersKept": true,
+              "detail": "事件集合 [] → []"
+            },
+            "reason": null,
+            "replacementExcerpt": "<div class=\"history\">\n      <div v-for=\"(item, index) in historyList\" :key=\"item.id\" class=\"history-item\">\n        <span"
+          },
+          "tokens": {
+            "prompt": 1,
+            "response": 49
+          }
+        },
+        {
+          "seq": 2,
+          "atChunk": 19,
+          "ruleId": "R-SEC-402",
+          "severity": "高",
+          "evidence": "变量 apiToken 硬编码密钥（sk-l****05），须改为环境变量注入",
+          "regen": {
+            "level": 1,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "declsKept": true,
+              "detail": "声明保留 [apiToken]"
+            },
+            "reason": null,
+            "replacementExcerpt": "const apiToken = import.meta.env.VITE_API_TOKEN;"
+          },
+          "tokens": {
+            "prompt": 1,
+            "response": 13
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "tokens": {
+        "original": 528,
+        "gateRegen": 64,
+        "fullRegen": 1063,
+        "savedRatio": 0.9397930385700847
+      },
+      "latency": {
+        "gateMs": 355,
+        "baselineMs": 2153
+      }
+    },
+    {
+      "caseId": "WEB-CASE-010",
+      "task": "生成批量选择表格（模型修复片段丢失兄弟事件，契约校验应拒绝）",
+      "codeLines": 13,
+      "streamChunks": 7,
+      "expectViolations": [
+        "R-TPL-002"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 4,
+          "ruleId": "R-TPL-002",
+          "severity": "低",
+          "evidence": "组件 el-table 不支持事件 selection-chang，合法事件：row-click, selection-change, sort-change, row-dblclick",
+          "regen": {
+            "level": 2,
+            "accepted": false,
+            "contract": {
+              "ok": false,
+              "eventsPreserved": false,
+              "othersKept": false,
+              "detail": "事件集合 [row-click,selection-chang] → [selection-change]"
+            },
+            "reason": "替换片段与已冻结节点接口契约不一致",
+            "replacementExcerpt": null
+          },
+          "tokens": {
+            "prompt": 1,
+            "response": 0
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "tokens": {
+        "original": 107,
+        "gateRegen": 1,
+        "fullRegen": 221,
+        "savedRatio": 0.995475113122172
+      },
+      "latency": {
+        "gateMs": 122,
+        "baselineMs": 518
+      }
+    },
+    {
+      "caseId": "WEB-CASE-011",
+      "task": "生成姓名输入框（属性名拼写错误，模型重生成修正）",
+      "codeLines": 10,
+      "streamChunks": 6,
+      "expectViolations": [
+        "R-TPL-002"
+      ],
+      "interceptions": [
+        {
+          "seq": 1,
+          "atChunk": 3,
+          "ruleId": "R-TPL-002",
+          "severity": "低",
+          "evidence": "组件 el-input 不支持属性 maxlen，合法属性：modelValue, placeholder, disabled, clearable, maxlength, rows, readonly, type",
+          "regen": {
+            "level": 2,
+            "accepted": true,
+            "contract": {
+              "ok": true,
+              "eventsPreserved": true,
+              "othersKept": true,
+              "detail": "事件集合 [] → []"
+            },
+            "reason": null,
+            "replacementExcerpt": "<el-input v-model=\"form.name\" maxlength=\"20\" placeholder=\"姓名\" />"
+          },
+          "tokens": {
+            "prompt": 1,
+            "response": 18
+          }
+        }
+      ],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "tokens": {
+        "original": 72,
+        "gateRegen": 19,
+        "fullRegen": 151,
+        "savedRatio": 0.8741721854304636
+      },
+      "latency": {
+        "gateMs": 154,
+        "baselineMs": 392
+      }
+    },
+    {
+      "caseId": "WEB-CASE-012",
+      "task": "生成数据看板（合规对照，含列表渲染与组件属性绑定）",
+      "codeLines": 19,
+      "streamChunks": 10,
+      "expectViolations": [],
+      "interceptions": [],
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "tokens": {
+        "original": 177,
+        "gateRegen": 0,
+        "fullRegen": 0,
+        "savedRatio": null
+      },
+      "latency": {
+        "gateMs": 0,
+        "baselineMs": 0
+      }
+    }
+  ],
+  "trace": [
+    {
+      "caseId": "WEB-CASE-001",
+      "type": "pending-resolved",
+      "handler": "onSearch",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-001",
+      "type": "pending-resolved",
+      "handler": "onReset",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-001",
+      "type": "pending-resolved",
+      "handler": "onRowClick",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-001",
+      "type": "pending-resolved",
+      "handler": "onPageChange",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-001",
+      "type": "pending-resolved",
+      "handler": "onSearch",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-001",
+      "type": "pending-resolved",
+      "handler": "onReset",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-001",
+      "type": "pending-resolved",
+      "handler": "onRowClick",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-001",
+      "type": "pending-resolved",
+      "handler": "onPageChange",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-002",
+      "type": "pending-resolved",
+      "handler": "onBack",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-002",
+      "type": "pending-resolved",
+      "handler": "onBack",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-007",
+      "type": "pending-resolved",
+      "handler": "onOk",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-007",
+      "type": "pending-resolved",
+      "handler": "onOk",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-007",
+      "type": "pending-resolved",
+      "handler": "onOk",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-008",
+      "type": "pending-resolved",
+      "handler": "onSave",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-009",
+      "type": "pending-resolved",
+      "handler": "onKeywordChange",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-009",
+      "type": "pending-resolved",
+      "handler": "onQuery",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-009",
+      "type": "pending-resolved",
+      "handler": "onExport",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-009",
+      "type": "pending-resolved",
+      "handler": "onRowClick",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-009",
+      "type": "pending-resolved",
+      "handler": "onSortChange",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-009",
+      "type": "pending-resolved",
+      "handler": "onPageChange",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-009",
+      "type": "pending-resolved",
+      "handler": "onKeywordChange",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-009",
+      "type": "pending-resolved",
+      "handler": "onQuery",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-009",
+      "type": "pending-resolved",
+      "handler": "onExport",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-009",
+      "type": "pending-resolved",
+      "handler": "onRowClick",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-009",
+      "type": "pending-resolved",
+      "handler": "onSortChange",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-009",
+      "type": "pending-resolved",
+      "handler": "onPageChange",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-010",
+      "type": "pending-resolved",
+      "handler": "onRowClick",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-011",
+      "type": "pending-resolved",
+      "handler": "onSubmit",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-011",
+      "type": "pending-resolved",
+      "handler": "onSubmit",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-012",
+      "type": "pending-resolved",
+      "handler": "onChange",
+      "note": "声明随后到达，挂起判定解除"
+    },
+    {
+      "caseId": "WEB-CASE-012",
+      "type": "pending-resolved",
+      "handler": "onRefresh",
+      "note": "声明随后到达，挂起判定解除"
+    }
+  ],
+  "constraintSummary": {
+    "matrixApis": 15,
+    "catalogComponents": 11,
+    "extraRuleHooks": 3,
+    "framework": "vue3-script-setup + element-plus"
+  },
+  "notes": "预标注用例的模拟流式输出原型实验；耗时为 token×1.8ms 的估算值，非真实墙钟时间；fixHint 为预置模型重生成结果。"
+}
